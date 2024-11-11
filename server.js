@@ -14,7 +14,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: process.env.NODE_ENV === "production", httpOnly: true }
+  // cookie: { secure: process.env.NODE_ENV === "production", httpOnly: true }
 }))
 app.use(express.static("public"))
 // File upload handling
