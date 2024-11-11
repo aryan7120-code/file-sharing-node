@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,7 +9,8 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background-image: url('https://via.placeholder.com/1920x1080'); /* Background image */
+      background-image: url('/bg.jpg');
+      /* Background image */
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -22,7 +24,8 @@
     }
 
     .container {
-      background-color: rgba(255, 255, 255, 0.9); /* Transparent white background */
+      background-color: rgba(255, 255, 255, 0.9);
+      /* Transparent white background */
       padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -76,7 +79,7 @@
       color: #333;
     }
 
-    form input[type="file"], 
+    form input[type="file"],
     form input[type="password"] {
       padding: 0.8rem;
       border: 1px solid #ddd;
@@ -138,47 +141,52 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <!-- Logo -->
     <div class="logo">
-      <img src="https://via.placeholder.com/80" alt="Logo">
+      <img src="/main.png" alt="Logo">
     </div>
 
     <h1>File Sharing Service</h1>
 
-    <% if (locals.fileLink != null) { %>
+    <% if (locals.fileLink !=null) { %>
       <div class="file-link">
         <p>Your file has been uploaded successfully!</p>
-        <a href="<%= locals.fileLink %>"><%= locals.fileLink %></a>
+        <a href="<%= locals.fileLink %>">
+          <%= locals.fileLink %>
+        </a>
       </div>
 
       <div class="share-options">
         <a href="<%= locals.shareLinkWhatsapp %>" target="_blank">Share on WhatsApp</a>
         <a href="<%= locals.shareLinkEmail %>" class="email">Share via Email</a>
       </div>
-    <% } %>
-
-    <form action="/upload" method="post" enctype="multipart/form-data">
-      <label for="file">Choose File:</label>
-      <input type="file" id="file" name="file" required />
-
-      <label for="password">Set a Password (optional):</label>
-      <input type="password" id="password" name="password" placeholder="Enter password" />
-
-      <button type="submit">Upload & Share</button>
-    </form>
-
-    <!-- Sign-up and Login Links -->
-    <div class="auth-links">
-      <% if (!locals.isAuthenticated) { %>
-        <p>
-          <a href="/login">Login</a> | <a href="/register">Sign Up</a>
-        </p>
-      <% } else { %>
-        <p>Welcome! <a href="/logout">Logout</a></p>
       <% } %>
-    </div>
+
+        <form action="/upload" method="post" enctype="multipart/form-data">
+          <label for="file">Choose File:</label>
+          <input type="file" id="file" name="file" required />
+
+          <label for="password">Set a Password (optional):</label>
+          <input type="password" id="password" name="password" placeholder="Enter password" />
+
+          <button type="submit">Upload & Share</button>
+        </form>
+
+        <!-- Sign-up and Login Links -->
+        <div class="auth-links">
+          <% if (!locals.session.userId) { %>
+            <p>
+              <a href="/login">Login</a> | <a href="/register">Sign Up</a>
+            </p>
+            <% } else { %>
+              <p>Welcome! <a href="/logout">Logout</a></p>
+              <% } %>
+                <% console.log(locals) %>
+        </div>
   </div>
 </body>
+
 </html>
