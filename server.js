@@ -16,7 +16,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: process.env.NODE_ENV === "production", httpOnly: true }
 }))
-
+app.use(express.static("public"))
 // File upload handling
 const upload = multer({ dest: "uploads" })
 
@@ -36,39 +36,55 @@ function isAuthenticated(req, res, next) {
     res.redirect("/login")
   }
 }
-
+function isNotAuthenticated(req, res, next) {
+  if (req.session.userId) {
+    res.redirect("/")
+  } else {
+    next()
+  }
+}
 // --------------
 // Routes
 // --------------
 
 // Home page (index)
 app.get("/", (req, res) => {
-  res.render("index")
+  res.render("index", { session: req.session })
 })
 
 // Register route
-app.get("/register", (req, res) => {
-  res.render("register")
+app.get("/register", isNotAuthenticated, (req, res) => {
+  res.render("register", { error: "" })
 })
 
 app.post("/register", async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    // Check if username already exists
+    const existingUser = await User.findOne({ username: req.body.username });
+    if (existingUser) {
+      return res.render("register", { error: "Username already exists. Please choose another." });
+    }
+
+    // Create new user
     const user = await User.create({
       username: req.body.username,
-      password: hashedPassword
-    })
-    req.session.userId = user._id // Auto-login user after registration
-    res.redirect("/")
+      password: hashedPassword,
+    });
+
+    // Auto-login user after registration
+    req.session.userId = user._id;
+    res.redirect("/");
   } catch (e) {
-    console.error("Error during registration:", e)
-    res.redirect("/register")
+    console.error("Error during registration:", e);
+    res.render("register", { error: "Error during registration. Please try again." });
   }
-})
+});
 
 // Login route
-app.get("/login", (req, res) => {
-  res.render("login")
+app.get("/login", isNotAuthenticated, (req, res) => {
+  res.render("login", { error: "" })
 })
 
 app.post("/login", async (req, res) => {
@@ -112,10 +128,11 @@ app.post("/upload", isAuthenticated, upload.single("file"), async (req, res) => 
     const file = await File.create(fileData)
     const fileLink = `${req.headers.origin}/file/${file.id}`
 
-    res.render("index", { 
+    res.render("index", {
       fileLink,
       shareLinkEmail: `mailto:?subject=File Share&body=Download your file here: ${fileLink}`,
-      shareLinkWhatsapp: `https://api.whatsapp.com/send?text=Download your file here: ${fileLink}`
+      shareLinkWhatsapp: `https://api.whatsapp.com/send?text=Download your file here: ${fileLink}`,
+      session: req.session
     })
   } catch (e) {
     console.error("Error during file upload:", e)
