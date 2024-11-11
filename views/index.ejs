@@ -4,21 +4,181 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>File Sharing Service</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-image: url('https://via.placeholder.com/1920x1080'); /* Background image */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9); /* Transparent white background */
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .container h1 {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      color: #007bff;
+    }
+
+    .logo {
+      margin-bottom: 1rem;
+    }
+
+    .logo img {
+      width: 80px;
+    }
+
+    .container p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .file-link {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background-color: #eaf4ff;
+      border-radius: 5px;
+    }
+
+    .file-link a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    form label {
+      text-align: left;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    form input[type="file"], 
+    form input[type="password"] {
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+
+    form button {
+      padding: 0.8rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+      background-color: #0056b3;
+    }
+
+    .share-options {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .share-options a {
+      text-decoration: none;
+      color: white;
+      background-color: #25d366;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+
+    .share-options a.email {
+      background-color: #0072c6;
+    }
+
+    .share-options a:hover {
+      opacity: 0.9;
+    }
+
+    .auth-links {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .auth-links a {
+      text-decoration: none;
+      color: #007bff;
+      margin: 0 0.5rem;
+    }
+
+    .auth-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <% if (locals.fileLink != null) { %>
-    <div style="margin-bottom: 1rem;">
-      Your file is upload
-      <a href="<%= locals.fileLink %>"><%= locals.fileLink %></a>
+  <div class="container">
+    <!-- Logo -->
+    <div class="logo">
+      <img src="https://via.placeholder.com/80" alt="Logo">
     </div>
-  <% } %>
-  <form action="/upload" method="post" style="display: grid; gap: .5rem; grid-template-columns: auto 1fr; max-width: 500px; margin: 0 auto;" enctype="multipart/form-data">
-    <label for="file">File:</label>
-    <input type="file" id="file" name="file" required />
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" />
-    <button style="grid-column: span 2;" type="submit">Share</button>
-  </form>
+
+    <h1>File Sharing Service</h1>
+
+    <% if (locals.fileLink != null) { %>
+      <div class="file-link">
+        <p>Your file has been uploaded successfully!</p>
+        <a href="<%= locals.fileLink %>"><%= locals.fileLink %></a>
+      </div>
+
+      <div class="share-options">
+        <a href="<%= locals.shareLinkWhatsapp %>" target="_blank">Share on WhatsApp</a>
+        <a href="<%= locals.shareLinkEmail %>" class="email">Share via Email</a>
+      </div>
+    <% } %>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <label for="file">Choose File:</label>
+      <input type="file" id="file" name="file" required />
+
+      <label for="password">Set a Password (optional):</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" />
+
+      <button type="submit">Upload & Share</button>
+    </form>
+
+    <!-- Sign-up and Login Links -->
+    <div class="auth-links">
+      <% if (!locals.isAuthenticated) { %>
+        <p>
+          <a href="/login">Login</a> | <a href="/register">Sign Up</a>
+        </p>
+      <% } else { %>
+        <p>Welcome! <a href="/logout">Logout</a></p>
+      <% } %>
+    </div>
+  </div>
 </body>
 </html>
