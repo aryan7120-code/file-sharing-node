@@ -1,0 +1,1 @@
+we can use this file for secure sharing with encrypted pass we have fully working code but the backend we are using here is free so it will stop working soon because of the trial period you can change that in the env file 
